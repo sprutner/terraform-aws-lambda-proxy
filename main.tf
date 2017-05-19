@@ -241,3 +241,11 @@ resource "aws_lambda_permission" "apigw_lambda_post_job_docker" {
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api_gw.id}/*/POST/v1/services/*/"
 }
+
+##Deploy
+
+#Deployment for API
+resource "aws_api_gateway_deployment" "deployment" {
+  rest_api_id = "${aws_api_gateway_rest_api.api_gw.id}"
+  stage_name  = "test"
+}

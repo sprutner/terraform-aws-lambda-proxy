@@ -16,7 +16,7 @@ resource "aws_lambda_function" "lambda" {
   role             = "${aws_iam_role.lambda_role.arn}"
   handler          = "index.myHandler"
   runtime          = "nodejs6.10"
-  source_code_hash = "${base64sha256(file("passthrough-api.zip"))}"
+  source_code_hash = "${base64sha256(file("passthrough_api.zip"))}"
   vpc_config       = {
     subnet_ids = ["${var.subnet_ids}"]
     security_group_ids = ["${var.security_group_ids}"]

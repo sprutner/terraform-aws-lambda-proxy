@@ -27,7 +27,7 @@ resource "aws_lambda_function" "lambda" {
 #Inline policy allows lambda to assume this role.
 
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda_role"
+  name = "lambda_role_${var.name}"
 
   assume_role_policy = <<POLICY
 {

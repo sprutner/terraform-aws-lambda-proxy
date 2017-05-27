@@ -21,6 +21,12 @@ resource "aws_lambda_function" "lambda" {
     subnet_ids = ["${var.subnet_ids}"]
     security_group_ids = ["${var.security_group_ids}"]
   }
+  environment {
+    variables = {
+      PROXY_HOST = "${var.proxy_host}"
+      PROXY_PORT = "${var.proxy_port}"
+    }
+  }
 }
 
 #The role assigned to the lambda function.
@@ -115,7 +121,7 @@ resource "aws_iam_policy_attachment" "lambda_vpc" {
 
 #Initialize the REST API
 resource "aws_api_gateway_rest_api" "api_gw" {
-  name          = "${var.name}_microservices_api"
+  name          = "${var.name}_proxy_api"
   description   = "API Gateway to talk to microservices"
 }
 
@@ -137,17 +143,17 @@ resource "aws_api_gateway_method" "proxy" {
 }
 
 #Integration to invoke lambda proxy
-resource "aws_api_gateway_integration" "v1_services_service-name_POST_integration" {
+resource "aws_api_gateway_integration" "proxy" {
   rest_api_id             = "${aws_api_gateway_rest_api.api_gw.id}"
-  resource_id             = "${aws_api_gateway_resource.v1_services_service-name.id}"
-  http_method             = "${aws_api_gateway_method.v1_services_service-name_POST.http_method}"
+  resource_id             = "${aws_api_gateway_resource.proxy.id}"
+  http_method             = "${aws_api_gateway_method.proxy.http_method}"
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "arn:aws:apigateway:${var.region}:lambda:path/2015-03-31/functions/${aws_lambda_function.lambda.arn}/invocations"
 }
 
 #The method response after receiving the 200 passed up through lambda from the service
-resource "aws_api_gateway_method_response" "v1_services_service-name_POST_method_response" {
+resource "aws_api_gateway_method_response" "proxy" {
   rest_api_id = "${aws_api_gateway_rest_api.api_gw.id}"
   resource_id = "${aws_api_gateway_resource.proxy.id}"
   http_method = "${aws_api_gateway_method.proxy.http_method}"

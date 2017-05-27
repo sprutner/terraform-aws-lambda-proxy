@@ -23,7 +23,7 @@ resource "aws_lambda_function" "lambda" {
   }
   environment {
     variables = {
-      PROXY_HOST = "${var.proxy_host}"
+      PROXY_HOST = "${var.proxy_hostname}"
       PROXY_PORT = "${var.proxy_port}"
     }
   }

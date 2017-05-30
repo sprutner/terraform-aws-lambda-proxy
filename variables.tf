@@ -8,11 +8,11 @@ variable "region" {
   description = "Region must be specified"
 }
 
-variable "fabio_hostname" {
+variable "proxy_hostname" {
   description = "Hostname for Fabio"
 }
 
-variable "fabio_port" {
+variable "proxy_port" {
   description = "Port for Nomad API"
   default     = "80"
 }

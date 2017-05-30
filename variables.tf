@@ -26,7 +26,3 @@ variable "security_group_ids" {
   type        = "list"
   description = "Security Group IDs to associate with Lambda Function"
 }
-
-variable "name" {
-  description = "Name of the API"
-}

@@ -171,10 +171,51 @@ resource "aws_lambda_permission" "apigw_lambda_post_job_docker" {
   source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api_gw.id}/*/POST/v1/services/*/"
 }
 
-##Deploy
+## Deploy
 
-#Deployment for API
+# Deployment for API
 resource "aws_api_gateway_deployment" "v1" {
   rest_api_id = "${aws_api_gateway_rest_api.api_gw.id}"
   stage_name  = "v1"
+}
+
+## Provision
+
+# Usage Plan
+resource "aws_api_gateway_usage_plan" "usageplan" {
+  name         = "usage-plan"
+  description  = "Usage plan for service gateway"
+  product_code = "${var.name}"
+
+  api_stages {
+    api_id = "${aws_api_gateway_rest_api.api_gw.id}"
+    stage  = "${aws_api_gateway_deployment.v1.stage_name}"
+  }
+
+  quota_settings {
+    limit  = 20
+    offset = 2
+    period = "WEEK"
+  }
+
+  throttle_settings {
+    burst_limit = 5
+    rate_limit  = 10
+  }
+}
+
+# Key for usage plan
+resource "aws_api_gateway_api_key" "key" {
+  name = "api_key"
+
+  stage_key {
+    rest_api_id = "${aws_api_gateway_rest_api.api_gw.id}"
+    stage_name  = "${aws_api_gateway_deployment.v1.stage_name}"
+  }
+}
+
+resource "aws_api_gateway_usage_plan_key" "main" {
+  key_id        = "${aws_api_gateway_api_key.key.id}"
+  key_type      = "API_KEY"
+  usage_plan_id = "${aws_api_gateway_usage_plan.usageplan.id}"
 }

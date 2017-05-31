@@ -1,4 +1,4 @@
-## Microservices API Gateway
+## Microservices / Proxy API Gateway
 ## Author: Seth Rutner
 
 
@@ -17,6 +17,7 @@ resource "aws_lambda_function" "lambda" {
   handler          = "index.myHandler"
   runtime          = "nodejs6.10"
   source_code_hash = "${base64sha256(file("proxy_api.zip"))}"
+  timeout          = "10"
   vpc_config       = {
     subnet_ids = ["${var.subnet_ids}"]
     security_group_ids = ["${var.security_group_ids}"]
@@ -78,39 +79,6 @@ resource "aws_iam_policy" "lambda_vpc_policy" {
 EOF
 }
 
-#Allows lambda function to hit the API Resource
-#Not sure if necessary
-// resource "aws_iam_policy" "lambda_api_allow_all" {
-//     name   = "lambda_api_allow_all_${var.name}"
-//     path   = "/"
-//     policy = <<EOF
-// {
-//     "Version": "2012-10-17",
-//     "Statement": [
-//         {
-//             "Sid": "Stmt1492128981000",
-//             "Effect": "Allow",
-//             "Action": [
-//                 "execute-api:*"
-//             ],
-//             "Resource": [
-//                 "*"
-//             ]
-//         }
-//     ]
-// }
-// EOF
-// }
-
-#Attached allow all api policy.
-#not sure if needed
-// resource "aws_iam_policy_attachment" "lambda_api_allow_all" {
-//     name       = "tf-iam-role-attachment-lambda-api-allow-all"
-//     roles      = ["${aws_iam_role.lambda_role.name}"]
-//     policy_arn = "${aws_iam_policy.lambda_api_allow_all.arn}"
-// }
-
-
 #attach the VPC permissions to the lambda policy
 resource "aws_iam_policy_attachment" "lambda_vpc" {
     name       = "tf-iam-role-attachment-lambda-vpc-policy"
@@ -162,20 +130,21 @@ resource "aws_api_gateway_method_response" "proxy" {
 }
 
 #Give lambda a 'trigger' permission to allow this API endpoint to invoke it
-resource "aws_lambda_permission" "apigw_lambda_post_job_docker" {
+resource "aws_lambda_permission" "apigw_lambda_proxy" {
   statement_id  = "AllowExecutionFromAPIGatewayPost"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.lambda.arn}"
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api_gw.id}/*/POST/v1/services/*/"
+  source_arn = "arn:aws:execute-api:${var.region}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.api_gw.id}/*/*/*"
 }
 
 ## Deploy
 
 # Deployment for API
 resource "aws_api_gateway_deployment" "v1" {
+  depends_on  = ["aws_api_gateway_method.proxy"]
   rest_api_id = "${aws_api_gateway_rest_api.api_gw.id}"
   stage_name  = "v1"
 }

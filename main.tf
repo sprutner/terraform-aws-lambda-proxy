@@ -153,7 +153,7 @@ resource "aws_api_gateway_deployment" "v1" {
 
 # Usage Plan
 resource "aws_api_gateway_usage_plan" "usageplan" {
-  name         = "usage-plan"
+  name         = "${var.name}-usage-plan"
   description  = "Usage plan for service gateway"
   product_code = "${var.name}"
 

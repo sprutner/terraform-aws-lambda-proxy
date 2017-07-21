@@ -74,21 +74,7 @@ exports.myHandler = function(event, context, callback) {
             // if the response was a 200 we can just pass the entire JSON back to
             // API Gateway for parsing. If the backend return a non 200 status
             // then we return it as an error
-            if (response.statusCode == 200) {
-                context.succeed(output);
-            } else {
-                // set the output JSON as a string inside the body property
-                output.body = responseString;
-
-                var errorObject = {
-                  errorType: "404",
-                  httpStatus: 500,
-                  requestId: context.awsRequestId,
-                  message: "Can't find resource"
-                }
-
-                context.fail(JSON.stringify(errorObject));
-            }
+            context.succeed(output);
         });
     }
     console.log("Options: " + JSON.stringify(options));

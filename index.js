@@ -35,15 +35,6 @@ exports.myHandler = function(event, context, callback) {
     if (!options.headers["Content-Type"]) {
         options.headers["Content-Type"] = "application/json";
     }
-    // build the query string
-    if (event.queryStringParameters && Object.keys(event.queryStringParameters).length > 0) {
-        var queryString = generateQueryString(event.queryStringParameters);
-
-        if (queryString !== "") {
-            options.path += "?" + queryString;
-        }
-    }
-
     // Define my callback to read the response and generate a JSON output for API Gateway.
     // The JSON output is parsed by the mapping templates
     callback = function(response) {
@@ -74,21 +65,7 @@ exports.myHandler = function(event, context, callback) {
             // if the response was a 200 we can just pass the entire JSON back to
             // API Gateway for parsing. If the backend return a non 200 status
             // then we return it as an error
-            if (response.statusCode == 200) {
-                context.succeed(output);
-            } else {
-                // set the output JSON as a string inside the body property
-                output.body = responseString;
-
-                var errorObject = {
-                  errorType: "404",
-                  httpStatus: 500,
-                  requestId: context.awsRequestId,
-                  message: "Can't find resource"
-                }
-
-                context.fail(JSON.stringify(errorObject));
-            }
+            context.succeed(output);
         });
     }
     console.log("Options: " + JSON.stringify(options));
@@ -111,14 +88,4 @@ exports.myHandler = function(event, context, callback) {
     });
 
     req.end();
-}
-
-function generateQueryString(params) {
-    var str = [];
-    for(var p in params) {
-        if (params.hasOwnProperty(p)) {
-            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(params[p]));
-        }
-    }
-    return str.join("&");
 }

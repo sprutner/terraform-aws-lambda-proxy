@@ -35,15 +35,6 @@ exports.myHandler = function(event, context, callback) {
     if (!options.headers["Content-Type"]) {
         options.headers["Content-Type"] = "application/json";
     }
-    // build the query string
-    if (event.queryStringParameters && Object.keys(event.queryStringParameters).length > 0) {
-        var queryString = generateQueryString(event.queryStringParameters);
-
-        if (queryString !== "") {
-            options.path += "?" + queryString;
-        }
-    }
-
     // Define my callback to read the response and generate a JSON output for API Gateway.
     // The JSON output is parsed by the mapping templates
     callback = function(response) {
@@ -97,14 +88,4 @@ exports.myHandler = function(event, context, callback) {
     });
 
     req.end();
-}
-
-function generateQueryString(params) {
-    var str = [];
-    for(var p in params) {
-        if (params.hasOwnProperty(p)) {
-            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(params[p]));
-        }
-    }
-    return str.join("&");
 }

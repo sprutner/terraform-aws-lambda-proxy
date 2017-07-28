@@ -17,6 +17,7 @@ exports.myHandler = function(event, context, callback) {
       method: event.httpMethod
     };
 
+    // test
     // if you have headers set them otherwise set the property to an empty map
     if (event.headers && Object.keys(event.headers).length > 0) {
         options.headers = event.headers

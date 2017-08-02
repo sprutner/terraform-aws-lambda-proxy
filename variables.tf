@@ -27,14 +27,6 @@ variable "security_group_ids" {
   description = "Security Group IDs to associate with Lambda Function"
 }
 
-variable "quota_limit" {
-  default = 20
-}
-
-variable "quota_offset" {
-  default = 2
-}
-
 variable "burst_limit" {
   default = 5
 }

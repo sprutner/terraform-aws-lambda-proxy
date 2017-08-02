@@ -162,12 +162,6 @@ resource "aws_api_gateway_usage_plan" "usageplan" {
     stage  = "${aws_api_gateway_deployment.v1.stage_name}"
   }
 
-  quota_settings {
-    limit  = "${var.quota_limit}"
-    offset = "${var.quota_offset}"
-    period = "WEEK"
-  }
-
   throttle_settings {
     burst_limit = "${var.burst_limit}"
     rate_limit  = "${var.rate_limit}"

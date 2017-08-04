@@ -11,12 +11,12 @@ data "aws_caller_identity" "current" {}
 
 #Create up our Lambda function to proxy requests to our VPC
 resource "aws_lambda_function" "lambda" {
-  filename         = "proxy_api.zip"
+  filename         = "${path.module}/proxy_api.zip"
   function_name    = "proxy_api_${var.name}"
   role             = "${aws_iam_role.lambda_role.arn}"
   handler          = "index.myHandler"
   runtime          = "nodejs6.10"
-  source_code_hash = "${base64sha256(file("proxy_api.zip"))}"
+  source_code_hash = "${base64sha256(file("${path.module}/proxy_api.zip"))}"
   timeout          = "10"
   vpc_config       = {
     subnet_ids = ["${var.subnet_ids}"]

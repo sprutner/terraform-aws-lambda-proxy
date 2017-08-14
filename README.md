@@ -1,3 +1,7 @@
+## Call me like this:
+
+### NOTE: It is not secure to output the api_key to the terminal. In real deployments, omit the api_key output.
+
 ```hcl
 module "lambda_proxy" {
   source             = "github.com/sprutner/tf_aws_lambda_proxy"

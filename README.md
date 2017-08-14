@@ -1,3 +1,6 @@
+# A module that creates an API Gateway Proxy to your VPC.
+Current stable version: v1.2
+
 ## Call me like this:
 
 ### NOTE: It is not secure to output the api_key to the terminal. In real deployments, omit the api_key output.

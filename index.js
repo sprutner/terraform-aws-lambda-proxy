@@ -17,7 +17,6 @@ exports.myHandler = function(event, context, callback) {
       method: event.httpMethod
     };
 
-    // test
     // if you have headers set them otherwise set the property to an empty map
     if (event.headers && Object.keys(event.headers).length > 0) {
         options.headers = event.headers
@@ -63,9 +62,7 @@ exports.myHandler = function(event, context, callback) {
 
            console.log("Output: " + JSON.stringify(output));
 
-            // if the response was a 200 we can just pass the entire JSON back to
-            // API Gateway for parsing. If the backend return a non 200 status
-            // then we return it as an error
+            // Pass the response through to API GW regardless of status 
             context.succeed(output);
         });
     }

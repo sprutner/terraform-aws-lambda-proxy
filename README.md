@@ -7,7 +7,7 @@ Current stable version: v1.2
 
 ```hcl
 module "lambda_proxy" {
-  source             = "github.com/sprutner/tf_aws_lambda_proxy"
+  source             = "github.com/sprutner/terraform-aws-lambda-proxy"
   region             = "${var.region}"
   name               = "proxy"
   proxy_hostname     = "exampleproxy${var.environment}.dev"

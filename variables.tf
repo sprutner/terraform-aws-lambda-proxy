@@ -8,15 +8,6 @@ variable "region" {
   description = "Region must be specified"
 }
 
-variable "proxy_hostname" {
-  description = "Hostname for Fabio"
-}
-
-variable "proxy_port" {
-  description = "Port for Nomad API"
-  default     = "80"
-}
-
 variable "subnet_ids" {
   type        = "list"
   description = "Subnet IDs to associate with Lambda Function"
@@ -33,4 +24,29 @@ variable "burst_limit" {
 
 variable "rate_limit" {
   default = 10
+}
+
+variable "lambda_name" {
+  description = "lambda name to load"
+  default = "proxy.zip"
+}
+
+variable "lambda_handler" {
+  description = "lambda handler function name"
+  default = "index.myHandler"
+}
+
+variable "lambda_engine" {
+  description = "engine to run the lambda code"
+  default = "nodejs6.10"
+}
+
+variable "lambda_env" {
+  description = "A mapping of environment variables to pass for lambda"
+  default     = {
+    variables = {
+      PROXY_HOST = "test"
+      PROXY_PORT = "80"
+    }
+  }
 }

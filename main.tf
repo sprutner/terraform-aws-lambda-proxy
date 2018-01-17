@@ -11,23 +11,18 @@ data "aws_caller_identity" "current" {}
 
 #Create up our Lambda function to proxy requests to our VPC
 resource "aws_lambda_function" "lambda" {
-  filename         = "${path.module}/proxy_api.zip"
-  function_name    = "proxy_api_${var.name}"
+  filename         = "${path.module}/${var.lambda_name}.zip"
+  function_name    = "${var.lambda_name}_${var.name}"
   role             = "${aws_iam_role.lambda_role.arn}"
-  handler          = "index.myHandler"
-  runtime          = "nodejs6.10"
-  source_code_hash = "${base64sha256(file("${path.module}/proxy_api.zip"))}"
+  handler          = "${var.lambda_hander}"
+  runtime          = "${var.lambda_engine}"
+  source_code_hash = "${base64sha256(file("${path.module}/${var.lambda_name}.zip"))}"
   timeout          = "10"
   vpc_config       = {
     subnet_ids = ["${var.subnet_ids}"]
     security_group_ids = ["${var.security_group_ids}"]
   }
-  environment {
-    variables = {
-      PROXY_HOST = "${var.proxy_hostname}"
-      PROXY_PORT = "${var.proxy_port}"
-    }
-  }
+  environment = "${var.lambda_env}"
 }
 
 #The role assigned to the lambda function.
@@ -90,7 +85,7 @@ resource "aws_iam_policy_attachment" "lambda_vpc" {
 #Initialize the REST API
 resource "aws_api_gateway_rest_api" "api_gw" {
   name          = "${var.name}_proxy_api"
-  description   = "API Gateway to talk to microservices"
+  description   = "API Gateway to talk to run ${var.lambda_name}"
 }
 
 #Set up proxy resource path
